@@ -145,7 +145,7 @@ function sendWhatsApp() {
   const mode = currentMode();
   const hoodieColor = document.getElementById("hoodieColor").value;
 
-  const phoneNumber = "593996028746";
+  const phoneNumber = "593996028746"; // tu número correcto
 
   let message = `Hola Bordarte 👋\nQuiero cotizar un hoodie personalizado.\n\n🧥 Color hoodie: ${hoodieColor}\n`;
 
@@ -157,11 +157,13 @@ function sendWhatsApp() {
 
     message += `📝 Texto: ${idea || "No especificado"}\n🔤 Tipografía: ${style}\n🎨 Color texto: ${color}\n📏 Tamaño: ${size}px\n`;
   } else {
-    message += `🖼️ Diseño: PNG cargado (te lo envío por este chat)\n`;
+    message += `🖼️ Diseño: PNG cargado\n`;
   }
 
   message += `\n¿Me ayudas con precio y tiempos?`;
 
+  // ESTA es la URL correcta (wa.me)
   const url = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
+
   window.open(url, "_blank");
 }
