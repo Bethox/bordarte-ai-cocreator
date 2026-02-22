@@ -1,105 +1,61 @@
-// ===== Helpers =====
-function setHoodieColor(hex) {
-  document.documentElement.style.setProperty("--hoodie-color", hex);
+const images = {
+  masculino: {
+    blanco: "m-blanco.jpg",
+    negro: "m-negro.jpg",
+    "azul-cielo": "m-azul-cielo.jpg",
+    "blanco-hueso": "m-blanco-hueso.jpg",
+    "gris-raton": "m-gris-raton.jpg"
+  },
+  femenino: {
+    blanco: "f-blanco.jpg",
+    negro: "f-negro.jpg",
+    "palo-rosa": "f-palo-rosa.jpg",
+    lavanda: "f-lavanda.jpg",
+    turquesa: "f-turquesa.jpg"
+  }
+};
 
-  const stroke = (hex.toLowerCase() === "#111111" || hex.toLowerCase() === "#000000")
-    ? "rgba(255,255,255,0.25)"
-    : "rgba(0,0,0,0.20)";
+let selectedGender = "masculino";
+let selectedColor = "blanco";
 
-  document.documentElement.style.setProperty("--hoodie-stroke", stroke);
-}
+function renderOptions() {
+  const container = document.getElementById("colorOptions");
+  container.innerHTML = "";
 
-function currentMode() {
-  return document.querySelector('input[name="mode"]:checked')?.value || "text";
-}
+  Object.keys(images[selectedGender]).forEach(color => {
+    const img = document.createElement("img");
+    img.src = images[selectedGender][color];
+    img.classList.add("thumb");
 
-function showTextMode() {
-  document.getElementById("textMode").classList.remove("hidden");
-  document.getElementById("uploadMode").classList.add("hidden");
-
-  document.getElementById("designPng").style.display = "none";
-  document.getElementById("designText").style.display = "block";
-}
-
-function showUploadMode() {
-  document.getElementById("uploadMode").classList.remove("hidden");
-  document.getElementById("textMode").classList.add("hidden");
-
-  document.getElementById("designText").style.display = "none";
-}
-
-// ===== Init =====
-document.addEventListener("DOMContentLoaded", () => {
-
-  document.querySelectorAll(".swatch").forEach(btn => {
-    btn.addEventListener("click", () => {
-      const hex = btn.getAttribute("data-hoodie");
-      document.getElementById("hoodieColor").value = hex;
-      setHoodieColor(hex);
-    });
-  });
-
-  document.getElementById("hoodieColor").addEventListener("input", (e) => {
-    setHoodieColor(e.target.value);
-  });
-
-  document.querySelectorAll('input[name="mode"]').forEach(r => {
-    r.addEventListener("change", () => {
-      if (currentMode() === "text") showTextMode();
-      else showUploadMode();
-    });
-  });
-
-  const fontSize = document.getElementById("fontSize");
-  const fontSizeLabel = document.getElementById("fontSizeLabel");
-  fontSize.addEventListener("input", () => {
-    fontSizeLabel.textContent = `${fontSize.value}px`;
-  });
-
-  const pngSize = document.getElementById("pngSize");
-  const pngSizeLabel = document.getElementById("pngSizeLabel");
-  pngSize.addEventListener("input", () => {
-    pngSizeLabel.textContent = `${pngSize.value}px`;
-    const img = document.getElementById("designPng");
-    img.style.maxWidth = `${pngSize.value}px`;
-    img.style.maxHeight = `${pngSize.value}px`;
-  });
-
-  document.getElementById("pngUpload").addEventListener("change", (e) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    if (file.type !== "image/png") {
-      alert("Por favor sube un archivo PNG.");
-      e.target.value = "";
-      return;
-    }
-
-    const reader = new FileReader();
-    reader.onload = () => {
-      const img = document.getElementById("designPng");
-      img.src = reader.result;
-
-      const size = document.getElementById("pngSize").value;
-      img.style.maxWidth = `${size}px`;
-      img.style.maxHeight = `${size}px`;
-
-      img.style.display = "block";
-      document.getElementById("designText").style.display = "none";
+    img.onclick = () => {
+      selectedColor = color;
+      document.getElementById("hoodieBase").src =
+        images[selectedGender][color];
     };
-    reader.readAsDataURL(file);
-  });
 
-  setHoodieColor(document.getElementById("hoodieColor").value);
-  showTextMode();
+    container.appendChild(img);
+  });
+}
+
+document.querySelectorAll('input[name="gender"]').forEach(radio => {
+  radio.addEventListener("change", (e) => {
+    selectedGender = e.target.value;
+    selectedColor = "blanco";
+    document.getElementById("hoodieBase").src =
+      images[selectedGender]["blanco"];
+    renderOptions();
+  });
 });
 
-// ===== Generar Diseño =====
+document.addEventListener("DOMContentLoaded", () => {
+  renderOptions();
+});
+
 function generateDesign() {
-  const mode = currentMode();
+  const mode = document.querySelector('input[name="mode"]:checked').value;
 
   if (mode === "text") {
-    const idea = document.getElementById("idea").value.trim();
+    const idea = document.getElementById("idea").value;
     const style = document.getElementById("style").value;
     const color = document.getElementById("designColor").value;
     const size = document.getElementById("fontSize").value;
@@ -110,60 +66,44 @@ function generateDesign() {
     designPng.style.display = "none";
     designText.style.display = "block";
 
-    designText.innerText = idea || "Tu diseño aquí";
+    designText.innerText = idea;
     designText.style.color = color;
-    designText.style.fontSize = `${size}px`;
+    designText.style.fontSize = size + "px";
 
-    if (style === "minimalista") {
-      designText.style.fontFamily = "Arial, sans-serif";
-      designText.style.letterSpacing = "1px";
-      designText.style.textTransform = "uppercase";
-    }
-    if (style === "romantico") {
-      designText.style.fontFamily = "Georgia, serif";
-      designText.style.letterSpacing = "0px";
-      designText.style.textTransform = "none";
-    }
-    if (style === "urbano") {
-      designText.style.fontFamily = "Impact, sans-serif";
-      designText.style.letterSpacing = "0.5px";
-      designText.style.textTransform = "uppercase";
-    }
-  }
+    if (style === "minimalista")
+      designText.style.fontFamily = "Arial";
 
-  if (mode === "upload") {
-    const fileInput = document.getElementById("pngUpload");
-    if (!fileInput.files || !fileInput.files[0]) {
-      alert("Primero sube un PNG para previsualizarlo.");
-      return;
-    }
+    if (style === "romantico")
+      designText.style.fontFamily = "Georgia";
+
+    if (style === "urbano")
+      designText.style.fontFamily = "Impact";
   }
 }
 
-// ===== WhatsApp =====
+document.getElementById("pngUpload")?.addEventListener("change", function(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = function() {
+    const img = document.getElementById("designPng");
+    img.src = reader.result;
+    img.style.display = "block";
+    document.getElementById("designText").style.display = "none";
+  };
+  reader.readAsDataURL(file);
+});
+
 function sendWhatsApp() {
-  const mode = currentMode();
-  const hoodieColor = document.getElementById("hoodieColor").value;
+  const phoneNumber = "593996028746";
 
-  const phoneNumber = "593996028746"; // tu número correcto
+  let message = `Hola Bordarte 👋\nQuiero cotizar un hoodie personalizado.\n\nGénero: ${selectedGender}\nColor: ${selectedColor}\n`;
 
-  let message = `Hola Bordarte 👋\nQuiero cotizar un hoodie personalizado.\n\n🧥 Color hoodie: ${hoodieColor}\n`;
+  const idea = document.getElementById("idea").value;
+  if (idea)
+    message += `Texto: ${idea}\n`;
 
-  if (mode === "text") {
-    const idea = document.getElementById("idea").value.trim();
-    const style = document.getElementById("style").value;
-    const color = document.getElementById("designColor").value;
-    const size = document.getElementById("fontSize").value;
-
-    message += `📝 Texto: ${idea || "No especificado"}\n🔤 Tipografía: ${style}\n🎨 Color texto: ${color}\n📏 Tamaño: ${size}px\n`;
-  } else {
-    message += `🖼️ Diseño: PNG cargado\n`;
-  }
-
-  message += `\n¿Me ayudas con precio y tiempos?`;
-
-  // ESTA es la URL correcta (wa.me)
   const url = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
-
   window.open(url, "_blank");
 }
