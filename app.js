@@ -157,7 +157,7 @@ function sendWhatsApp() {
   const hoodieColor = document.getElementById("hoodieColor").value;
 
   // CAMBIA ESTE NÚMERO
-  const phoneNumber = "593XXXXXXXXX";
+  const phoneNumber = "593996028746";
 
   let message = `Hola Bordarte 👋\nQuiero cotizar un hoodie personalizado.\n\n🧥 Color hoodie: ${hoodieColor}\n`;
 
