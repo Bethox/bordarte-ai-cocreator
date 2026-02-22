@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Bordarte AI Co-Creator</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <h1>Bordarte AI Co-Creator</h1>
+
+  <div class="container">
+
+    <div class="form-section">
+      <label>Describe tu idea:</label>
+      <textarea id="idea" placeholder="Ej: Frase minimalista sobre libertad"></textarea>
+
+      <label>Selecciona estilo:</label>
+      <select id="style">
+        <option value="minimalista">Minimalista</option>
+        <option value="romantico">Romántico</option>
+        <option value="urbano">Urbano</option>
+      </select>
+
+      <label>Color del diseño:</label>
+      <input type="color" id="colorPicker" value="#000000">
+
+      <button onclick="generateDesign()">Generar Visualización</button>
+      <button onclick="sendWhatsApp()">Solicitar Cotización</button>
+    </div>
+
+    <div class="preview-section">
+      <div class="hoodie">
+        <img src="https://i.imgur.com/8Qf5F4K.png" alt="Hoodie Blanco">
+        <div id="designText"></div>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
