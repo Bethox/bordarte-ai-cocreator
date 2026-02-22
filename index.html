@@ -1,41 +1,149 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>Bordarte AI Co-Creator</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-
   <h1>Bordarte AI Co-Creator</h1>
 
   <div class="container">
-
     <div class="form-section">
-      <label>Describe tu idea:</label>
-      <textarea id="idea" placeholder="Ej: Frase minimalista sobre libertad"></textarea>
+      <h2>1) Color del hoodie</h2>
 
-      <label>Selecciona estilo:</label>
-      <select id="style">
-        <option value="minimalista">Minimalista</option>
-        <option value="romantico">Romántico</option>
-        <option value="urbano">Urbano</option>
-      </select>
+      <div class="palette">
+        <button class="swatch" style="background:#ffffff" data-hoodie="#ffffff" title="Blanco"></button>
+        <button class="swatch" style="background:#111111" data-hoodie="#111111" title="Negro"></button>
+        <button class="swatch" style="background:#1f3a8a" data-hoodie="#1f3a8a" title="Azul"></button>
+        <button class="swatch" style="background:#0f766e" data-hoodie="#0f766e" title="Verde"></button>
+        <button class="swatch" style="background:#be123c" data-hoodie="#be123c" title="Rojo"></button>
+        <button class="swatch" style="background:#7c3aed" data-hoodie="#7c3aed" title="Morado"></button>
+      </div>
 
-      <label>Color del diseño:</label>
-      <input type="color" id="colorPicker" value="#000000">
+      <div class="row">
+        <label for="hoodieColor">O elige un color:</label>
+        <input type="color" id="hoodieColor" value="#ffffff">
+      </div>
 
-      <button onclick="generateDesign()">Generar Visualización</button>
+      <hr>
+
+      <h2>2) Tipo de diseño</h2>
+
+      <div class="toggle">
+        <label>
+          <input type="radio" name="mode" value="text" checked>
+          Texto
+        </label>
+        <label>
+          <input type="radio" name="mode" value="upload">
+          Subir PNG
+        </label>
+      </div>
+
+      <!-- MODO TEXTO -->
+      <div id="textMode" class="mode">
+        <label for="idea">Texto / nombre:</label>
+        <textarea id="idea" placeholder="Ej: BETHO / Libertad / Bordarte"></textarea>
+
+        <div class="row">
+          <label for="style">Tipografía:</label>
+          <select id="style">
+            <option value="minimalista">Minimalista</option>
+            <option value="romantico">Romántico</option>
+            <option value="urbano">Urbano</option>
+          </select>
+        </div>
+
+        <div class="row">
+          <label for="fontSize">Tamaño:</label>
+          <input type="range" id="fontSize" min="14" max="44" value="22">
+          <span id="fontSizeLabel">22px</span>
+        </div>
+
+        <div class="row">
+          <label for="designColor">Color del texto:</label>
+          <input type="color" id="designColor" value="#00ff00">
+        </div>
+      </div>
+
+      <!-- MODO PNG -->
+      <div id="uploadMode" class="mode hidden">
+        <label for="pngUpload">Sube tu diseño (PNG):</label>
+        <input type="file" id="pngUpload" accept="image/png">
+
+        <p class="hint">
+          Consejo: PNG con fondo transparente se ve mejor.
+        </p>
+
+        <div class="row">
+          <label for="pngSize">Tamaño del PNG:</label>
+          <input type="range" id="pngSize" min="80" max="220" value="150">
+          <span id="pngSizeLabel">150px</span>
+        </div>
+      </div>
+
+      <button class="primary" onclick="generateDesign()">Generar Visualización</button>
       <button onclick="sendWhatsApp()">Solicitar Cotización</button>
     </div>
 
     <div class="preview-section">
       <div class="hoodie">
-        <img src="https://i.imgur.com/8Qf5F4K.png" alt="Hoodie Blanco">
-        <div id="designText"></div>
+        <!-- Hoodie SVG (sin imagen externa) -->
+        <svg class="hoodie-svg" viewBox="0 0 400 440" xmlns="http://www.w3.org/2000/svg" aria-label="Hoodie">
+          <!-- Sombra -->
+          <path d="M70 160 C55 175 45 210 45 250 L45 385 C45 405 60 420 80 420 L320 420 C340 420 355 405 355 385 L355 250 C355 210 345 175 330 160"
+                fill="#000" opacity="0.15"/>
+
+          <!-- Capucha -->
+          <path d="M130 80 C145 40 175 25 200 25 C225 25 255 40 270 80
+                   C288 120 278 170 250 195 C232 216 216 226 200 226
+                   C184 226 168 216 150 195 C122 170 112 120 130 80 Z"
+                fill="var(--hoodie-color)" stroke="var(--hoodie-stroke)" stroke-width="3"/>
+
+          <!-- Abertura capucha -->
+          <path d="M160 104 C173 84 187 76 200 76 C213 76 227 84 240 104
+                   C252 124 250 152 235 168 C224 180 213 186 200 186
+                   C187 186 176 180 165 168 C150 152 148 124 160 104 Z"
+                fill="rgba(0,0,0,0.06)"/>
+
+          <!-- Cuerdas -->
+          <path d="M185 188 C180 218 170 242 160 260" stroke="rgba(0,0,0,0.25)" stroke-width="5" stroke-linecap="round"/>
+          <path d="M215 188 C220 218 230 242 240 260" stroke="rgba(0,0,0,0.25)" stroke-width="5" stroke-linecap="round"/>
+
+          <!-- Cuerpo -->
+          <path d="M110 165 C125 155 155 150 200 150 C245 150 275 155 290 165
+                   C315 180 330 210 330 250 L330 382
+                   C330 400 316 414 298 414 L102 414
+                   C84 414 70 400 70 382 L70 250
+                   C70 210 85 180 110 165 Z"
+                fill="var(--hoodie-color)" stroke="var(--hoodie-stroke)" stroke-width="3"/>
+
+          <!-- Bolsillo -->
+          <path d="M140 280 C160 318 176 334 200 334 C224 334 240 318 260 280
+                   C266 270 260 258 246 258 L154 258
+                   C140 258 134 270 140 280 Z"
+                fill="rgba(0,0,0,0.05)" stroke="rgba(0,0,0,0.12)" stroke-width="2"/>
+
+          <!-- Puños -->
+          <path d="M70 320 L95 320 L95 385 C95 398 86 410 73 410 L70 410 Z"
+                fill="rgba(0,0,0,0.05)" stroke="rgba(0,0,0,0.12)" stroke-width="2"/>
+          <path d="M330 320 L305 320 L305 385 C305 398 314 410 327 410 L330 410 Z"
+                fill="rgba(0,0,0,0.05)" stroke="rgba(0,0,0,0.12)" stroke-width="2"/>
+
+          <!-- Basta -->
+          <path d="M110 414 L290 414 C290 428 278 438 262 438 L138 438 C122 438 110 428 110 414 Z"
+                fill="rgba(0,0,0,0.05)" stroke="rgba(0,0,0,0.12)" stroke-width="2"/>
+        </svg>
+
+        <!-- Overlay (texto / png) -->
+        <div id="designOverlay">
+          <div id="designText"></div>
+          <img id="designPng" alt="Diseño PNG" />
+        </div>
       </div>
     </div>
-
   </div>
 
   <script src="app.js"></script>
